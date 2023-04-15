@@ -15,5 +15,19 @@ enum Token {
     // 标识符与数字
     tok_identifier = -20,
     tok_integer_number = -21,
-    tok_float_number = -22
+    tok_float_number = -22,
+
+    // 二元运算符
+    tok_add = -30,  // +
+    tok_sub = -31,  // -
+    tok_mul = -32,  // *
+    tok_div = -33,  // /
+    tok_and = -34,  // &&
+    tok_or = -35,   // ||
+    tok_lt = -36,   // <
+    tok_le = -37,   // <=
+    tok_gt = -38,   // >
+    tok_ge = -39,   // >=
+    tok_eq = -40,   // ==
+    tok_ne = -41,   // !=
 };

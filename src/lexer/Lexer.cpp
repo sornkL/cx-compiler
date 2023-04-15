@@ -10,7 +10,7 @@ void unget_character(int c) {
 }
 
 int get_token() {
-    int last_char = ' ';
+    static int last_char = ' ';
 
     while (isspace(last_char)) {
         last_char = get_character();
@@ -72,6 +72,63 @@ int get_token() {
             return tok_integer_number;
         }
     }
+
+    switch (last_char) {  // 二元运算符
+    case '+':
+        last_char = get_character();
+        return tok_add;
+    case '-':
+        last_char = get_character();
+        return tok_sub;
+    case '*':
+        last_char = get_character();
+        return tok_mul;
+    case '/':
+        last_char = get_character();
+        return tok_div;
+    case '&':
+        last_char = get_character();
+        if (last_char == '&') {
+            last_char = get_character();
+            return tok_and;
+        }
+        break;
+    case '|':
+        last_char = get_character();
+        if (last_char == '|') {
+            last_char = get_character();
+            return tok_or;
+        }
+        break;
+    case '<':
+        last_char = get_character();
+        if (last_char == '=') {
+            last_char = get_character();
+            return tok_le;
+        }
+        return tok_lt;
+    case '>':
+        last_char = get_character();
+        if (last_char == '=') {
+            last_char = get_character();
+            return tok_ge;
+        }
+        return tok_gt;
+    case '=':
+        last_char = get_character();
+        if (last_char == '=') {
+            last_char = get_character();
+            return tok_eq;
+        }
+        break;
+    case '!':
+        last_char = get_character();
+        if (last_char == '=') {
+            last_char = get_character();
+            return tok_ne;
+        }
+    }
+
 
     if (last_char == '/') {  // 处理注释
         int next_char = get_character();
