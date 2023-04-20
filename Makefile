@@ -2,13 +2,16 @@
 CXX := g++
 
 # Flags to pass to the compiler
-CXXFLAGS := -std=c++17 -Wall -Wextra
+CXXFLAGS := -std=c++17 -Wall -Wextra \
+			`llvm-config --cxxflags --ldflags --system-libs --libs core orcjit native`
 
 # Include directories
 INCLUDE_DIRS := -I./src
 
 # Source files to compile
 SRCS := ./src/lexer/Lexer.cpp \
+		./src/utils/Logger.cpp \
+		./src/parser/Parser.cpp \
         ./test.cpp
 
 # Object files to build

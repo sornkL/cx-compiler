@@ -3,12 +3,17 @@
 
 class NumberExprAST : public ExprAST {
 private:
-    int integer_value;
+    std::optional<int> integer_value;
     std::optional<double> float_value;
 
 public:
-    NumberExprAST(int integer_value) : integer_value(integer_value) {}
-    NumberExprAST(double float_value) : float_value(float_value) {}
+    NumberExprAST(std::optional<int> integer_value, std::optional<double>) 
+        : integer_value(integer_value), float_value(float_value) {}
 
     llvm::Value *codegen() override;
 };
+
+// temp
+llvm::Value *NumberExprAST::codegen() {
+    return nullptr;
+}
