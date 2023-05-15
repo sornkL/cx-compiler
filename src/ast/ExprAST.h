@@ -1,5 +1,6 @@
 #ifndef __EXPR_AST_H__
 #define __EXPR_AST_H__
+#include <map>
 #include <llvm/IR/Value.h>
 
 class ExprAST {

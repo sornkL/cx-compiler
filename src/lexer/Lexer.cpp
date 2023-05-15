@@ -1,6 +1,8 @@
 #include "Lexer.h"
 #include <iostream>
 
+int current_token;
+
 std::string identifier;
 int integer_number;
 double float_number;
@@ -167,4 +169,9 @@ int get_token() {
     int cur_char = last_char;
     last_char = get_character();
     return cur_char;
+}
+
+int get_next_token() {
+    current_token = get_token();
+    return current_token;
 }

@@ -1,4 +1,5 @@
 #include "ExprAST.h"
+#include "../cx/cx.h"
 #include <optional>
 
 class NumberExprAST : public ExprAST {
@@ -12,8 +13,3 @@ public:
 
     llvm::Value *codegen() override;
 };
-
-// temp
-llvm::Value *NumberExprAST::codegen() {
-    return nullptr;
-}
