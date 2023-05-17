@@ -1,6 +1,6 @@
 #include "src/lexer/Lexer.h"
 #include "src/parser/Parser.h"
-#include "src/cx/cx.h"
+#include "src/cx/CX.h"
 #include <iostream>
 
 static void initialize_module() {

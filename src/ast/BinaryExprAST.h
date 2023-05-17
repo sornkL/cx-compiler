@@ -1,5 +1,5 @@
 #include "ExprAST.h"
-#include "../cx/cx.h"
+#include "../cx/CX.h"
 
 class BinaryExprAST : public ExprAST {
 private:

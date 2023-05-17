@@ -1,4 +1,4 @@
-#include "cx.h"
+#include "CX.h"
 
 std::unique_ptr<llvm::LLVMContext> context;
 

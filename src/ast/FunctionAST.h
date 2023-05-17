@@ -1,6 +1,6 @@
 #include "ExprAST.h"
 #include "PrototypeAST.h"
-#include "../cx/cx.h"
+#include "../cx/CX.h"
 
 class FunctionAST {
     std::unique_ptr<PrototypeAST> proto;

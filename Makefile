@@ -11,7 +11,7 @@ INCLUDE_DIRS := -I./src
 # Source files to compile
 SRCS := ./src/lexer/Lexer.cpp \
 		./src/utils/Logger.cpp \
-		./src/cx/cx.cpp \
+		./src/cx/CX.cpp \
 		./src/ast/BinaryExprAST.cpp \
 		./src/ast/NumberExprAST.cpp \
 		./src/ast/PrototypeAST.cpp \
