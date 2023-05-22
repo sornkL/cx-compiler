@@ -10,3 +10,8 @@ std::unique_ptr<ExprAST> log_error(std::string str) {
     std::cerr << "Error: " << str << std::endl;
     return nullptr;
 }
+
+llvm::Value *log_error_v(const char *str) {
+    std::cerr << "Error: " << str << std::endl;
+    return nullptr;
+}

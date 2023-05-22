@@ -14,9 +14,13 @@
 #include <map>
 
 extern std::unique_ptr<llvm::LLVMContext> context;
-extern std::unique_ptr<llvm::Module> module;
+extern std::unique_ptr<llvm::Module> modules;
 extern std::unique_ptr<llvm::IRBuilder<>> builder;
-extern std::map<std::string, llvm::Value *> named_values;
+extern std::map<std::string, llvm::AllocaInst *> named_values;
 extern std::unique_ptr<llvm::legacy::FunctionPassManager> fpm;
+
+llvm::AllocaInst *create_entry_block_alloca(llvm::Function *function, 
+                                            const std::string &var_name,
+                                            llvm::Type *type);
 
 #endif

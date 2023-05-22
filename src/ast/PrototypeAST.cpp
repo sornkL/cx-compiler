@@ -8,7 +8,7 @@ llvm::Function *PrototypeAST::codegen() {
     }
 
     llvm::FunctionType *function_type = llvm::FunctionType::get(return_type, args_types, false);
-    llvm::Function *function = llvm::Function::Create(function_type, llvm::Function::ExternalLinkage, callee, *module);
+    llvm::Function *function = llvm::Function::Create(function_type, llvm::Function::ExternalLinkage, callee, *modules);
 
     unsigned int index = 0;
     for (auto &arg : function->args()) {

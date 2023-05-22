@@ -153,7 +153,7 @@ int get_token() {
             last_char = get_character();
             return tok_eq;
         }
-        break;
+        return tok_assign;
     case '!':
         last_char = get_character();
         if (last_char == '=') {

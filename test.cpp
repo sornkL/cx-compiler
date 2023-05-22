@@ -6,7 +6,7 @@
 static void initialize_module() {
     context = std::make_unique<llvm::LLVMContext>();
     builder = std::make_unique<llvm::IRBuilder<>>(*context);
-    module = std::make_unique<llvm::Module>("cx compiler", *context);
+    modules = std::make_unique<llvm::Module>("cx compiler", *context);
 }
 
 static void handle_top_level_expression() {
@@ -16,7 +16,7 @@ static void handle_top_level_expression() {
             function_ir->print(llvm::errs());
             std::cout << std::endl;
 
-            function_ir->eraseFromParent();
+            // function_ir->eraseFromParent();
         }
     } else {
         get_next_token();
@@ -25,7 +25,7 @@ static void handle_top_level_expression() {
 
 static void main_loop() {
     while (true) {
-        std::cout << "$> ";
+        std::cout << ">>> ";
         switch (current_token) {
             case tok_eof:
                 return;
@@ -40,13 +40,13 @@ static void main_loop() {
 }
 
 int main(int argc, char *argv[]) {
-    std::cout << "$> ";
+    std::cout << ">>> ";
     get_next_token();
     initialize_module();
-    // module = std::make_unique<llvm::Module>("cx compiler", *context);
+
     main_loop();
 
-    module->print(llvm::errs(), nullptr);
+    modules->print(llvm::errs(), nullptr);
 
     return 0;
 }

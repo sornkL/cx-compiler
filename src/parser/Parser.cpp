@@ -2,6 +2,7 @@
 #include "../ast/ExprAST.h"
 #include "../ast/NumberExprAST.h"
 #include "../ast/VariableExprAST.h"
+#include "../ast/DeclareExprAST.h"
 #include "../utils/Logger.h"
 #include "Parser.h"
 #include <string>
@@ -22,6 +23,7 @@ std::map<int, int> binary_op_precedence = {
     {tok_ge, 70},
     {tok_eq, 80},
     {tok_ne, 80},
+    {tok_assign, 10},
 };
 
 static int get_token_precedence() {
@@ -52,6 +54,31 @@ std::unique_ptr<ExprAST> parse_float_number_expr() {
     return std::move(result);
 }
 
+std::unique_ptr<ExprAST> parse_declaration_expr() {
+    llvm::Type *id_type = nullptr;
+    switch (current_token) {
+        case tok_int:
+            id_type = llvm::Type::getInt32Ty(*context);
+            break;
+        case tok_bool:
+            id_type = llvm::Type::getInt1Ty(*context);
+            break;
+        default:
+            log_error("不支持该类型");
+            break;
+    }
+    get_next_token();
+
+    if (current_token != tok_identifier) {
+        return log_error("缺失标识符");
+    }
+
+    std::string id_name = identifier;
+    get_next_token();
+
+    return std::make_unique<DeclareExprAST>(id_name, id_type);
+}
+
 std::unique_ptr<ExprAST> parse_parenthesis_expr() {
     get_next_token();
     auto v = parse_expression();
@@ -67,7 +94,15 @@ std::unique_ptr<ExprAST> parse_parenthesis_expr() {
 }
 
 std::unique_ptr<ExprAST> parse_identifier_expr() {
-    return log_error("Not Implemented");
+    std::string id_name = identifier;
+
+    get_next_token();
+    if (current_token != '(') {
+        return std::make_unique<VariableExprAST>(id_name);
+    }
+
+    // todo 支持函数中的标识符parse
+    return nullptr;
 }
 
 std::unique_ptr<ExprAST> parse_if_expression() {
@@ -88,8 +123,12 @@ std::unique_ptr<ExprAST> parse_primary() {
             return parse_float_number_expr();
         case '(':
             return parse_parenthesis_expr();
+        case tok_int:
+            return parse_declaration_expr();
+        case tok_bool:
+            return parse_declaration_expr();
         default:
-            std::string error_message = "Unknown token: " + std::to_string(current_token);
+            std::string error_message = "未知的token: " + std::to_string(current_token);
             return log_error(error_message);
     }
 }
@@ -123,7 +162,7 @@ std::unique_ptr<ExprAST> parse_binary_op_rhs(int expr_prec, std::unique_ptr<Expr
 
 std::unique_ptr<FunctionAST> parse_top_level_expression() {
     if (auto expr = parse_expression()) {
-        llvm::Type *return_type = llvm::Type::getFloatTy(*context);  // 默认返回类型为 float
+        llvm::Type *return_type = llvm::Type::getInt32Ty(*context);  // 默认返回类型为int
 
         auto proto = std::make_unique<PrototypeAST>("__anon_expr", std::vector<std::pair<std::string, llvm::Type *>>(), return_type);
         return std::make_unique<FunctionAST>(std::move(proto), std::move(expr));

@@ -13,6 +13,8 @@ std::unique_ptr<ExprAST> parse_integer_number_expr();
 
 std::unique_ptr<ExprAST> parse_float_number_expr(); 
 
+std::unique_ptr<ExprAST> parse_declaration_expr();
+
 std::unique_ptr<ExprAST> parse_parenthesis_expr();
 
 std::unique_ptr<ExprAST> parse_identifier_expr();

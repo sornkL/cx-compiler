@@ -30,4 +30,5 @@ enum Token {
     tok_ge = -39,   // >=
     tok_eq = -40,   // ==
     tok_ne = -41,   // !=
+    tok_assign = -42,   // =
 };

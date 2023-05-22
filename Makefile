@@ -12,10 +12,12 @@ INCLUDE_DIRS := -I./src
 SRCS := ./src/lexer/Lexer.cpp \
 		./src/utils/Logger.cpp \
 		./src/cx/CX.cpp \
+		./src/ast/VariableExprAST.cpp \
 		./src/ast/BinaryExprAST.cpp \
 		./src/ast/NumberExprAST.cpp \
 		./src/ast/PrototypeAST.cpp \
 		./src/ast/FunctionAST.cpp \
+		./src/ast/DeclareExprAST.cpp \
 		./src/parser/Parser.cpp \
         ./test.cpp
 
