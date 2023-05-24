@@ -23,4 +23,8 @@ llvm::AllocaInst *create_entry_block_alloca(llvm::Function *function,
                                             const std::string &var_name,
                                             llvm::Type *type);
 
+bool is_value_number(llvm::Value *value);
+
+bool is_value_boolean(llvm::Value *value);
+
 #endif

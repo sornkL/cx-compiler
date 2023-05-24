@@ -14,6 +14,7 @@ SRCS := ./src/lexer/Lexer.cpp \
 		./src/cx/CX.cpp \
 		./src/ast/VariableExprAST.cpp \
 		./src/ast/BinaryExprAST.cpp \
+		./src/ast/BooleanExprAST.cpp \
 		./src/ast/NumberExprAST.cpp \
 		./src/ast/PrototypeAST.cpp \
 		./src/ast/FunctionAST.cpp \

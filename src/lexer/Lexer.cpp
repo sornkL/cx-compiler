@@ -6,6 +6,7 @@ int current_token;
 std::string identifier;
 int integer_number;
 double float_number;
+bool boolean;
 
 int get_character() {
     return getchar();
@@ -50,9 +51,11 @@ int get_token() {
             return tok_read;
         }
         if (identifier == "true") {
+            boolean = true;
             return tok_true;
         }
         if (identifier == "false") {
+            boolean = false;
             return tok_false;
         }
         return tok_identifier;

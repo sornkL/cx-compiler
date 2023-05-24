@@ -1,13 +1,5 @@
 #include "DeclareExprAST.h"
 
-// static llvm::AllocaInst *create_entry_block_alloca(llvm::Function *function, 
-//                                                    const std::string &var_name,
-//                                                    llvm::Type *type) {
-//     llvm::IRBuilder<> temp(&function->getEntryBlock(), function->getEntryBlock().begin());
-
-//     return temp.CreateAlloca(type, nullptr, var_name);
-// }
-
 llvm::Value *DeclareExprAST::codegen() {
     llvm::AllocaInst *old;
 
@@ -22,9 +14,11 @@ llvm::Value *DeclareExprAST::codegen() {
 
     llvm::Value *default_value = nullptr;
 
-    if (type->isIntegerTy()) {
+    if (type->isIntegerTy(1)) {  // 布尔型初始化
+        default_value = llvm::ConstantInt::get(type, false);
+    } else if (type->isIntegerTy()) {  // 整型初始化
         default_value = llvm::ConstantInt::get(type, 0);
-    } else if (type->isFloatTy()) {
+    } else if (type->isFloatTy()) {  // 浮点型初始化
         default_value = llvm::ConstantFP::get(type, 0);
     } else {
         return log_error_v("不支持该类型");

@@ -17,3 +17,11 @@ llvm::AllocaInst *create_entry_block_alloca(llvm::Function *function,
 
     return temp.CreateAlloca(type, nullptr, var_name);
 }
+
+bool is_value_number(llvm::Value *value) {
+    return (!value->getType()->isIntegerTy(1)) && (value->getType()->isIntegerTy() || value->getType()->isFloatTy());
+}
+
+bool is_value_boolean(llvm::Value *value) {
+    return value->getType()->isIntegerTy(1);
+}

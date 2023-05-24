@@ -1,4 +1,5 @@
 #include "../ast/BinaryExprAST.h"
+#include "../ast/BooleanExprAST.h"
 #include "../ast/ExprAST.h"
 #include "../ast/NumberExprAST.h"
 #include "../ast/VariableExprAST.h"
@@ -50,6 +51,12 @@ std::unique_ptr<ExprAST> parse_integer_number_expr() {
 
 std::unique_ptr<ExprAST> parse_float_number_expr() {
     auto result = std::make_unique<NumberExprAST>(std::nullopt, float_number);
+    get_next_token();
+    return std::move(result);
+}
+
+std::unique_ptr<ExprAST> parse_boolean_expr() {
+    auto result = std::make_unique<BooleanExprAST>(boolean);
     get_next_token();
     return std::move(result);
 }
@@ -121,6 +128,10 @@ std::unique_ptr<ExprAST> parse_primary() {
             return parse_integer_number_expr();
         case tok_float_number:
             return parse_float_number_expr();
+        case tok_true:
+            return parse_boolean_expr();
+        case tok_false:
+            return parse_boolean_expr();
         case '(':
             return parse_parenthesis_expr();
         case tok_int:
