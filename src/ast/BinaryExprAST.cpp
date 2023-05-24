@@ -14,9 +14,15 @@ llvm::Value *BinaryExprAST::codegen() {
         if (!value) {
             return nullptr;
         }
-        llvm::Value *variable = named_values[lhse->get_name()];
+
+        llvm::AllocaInst *alloca = named_values[lhse->get_name()];
+        llvm::Value *variable = builder->CreateLoad(alloca->getAllocatedType(), alloca, lhse->get_name());
         if (!variable) {
             return log_error_v("变量未定义");
+        }
+
+        if (variable->getType() != value->getType()) {
+            return log_error_v("变量类型与声明不符");
         }
         builder->CreateStore(value, variable);
         return value;
