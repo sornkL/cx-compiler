@@ -7,7 +7,7 @@ extern int current_token;  // 当前的token
 
 extern std::string identifier;  // 标识符
 extern int integer_number;  // 整数
-extern double float_number;  // 浮点数
+extern float float_number;  // 浮点数
 extern bool boolean;  // 布尔值
 
 

@@ -25,6 +25,10 @@ llvm::AllocaInst *create_entry_block_alloca(llvm::Function *function,
 
 bool is_value_number(llvm::Value *value);
 
+bool is_value_float(llvm::Value *value);
+
+bool is_value_integer(llvm::Value *value);
+
 bool is_value_boolean(llvm::Value *value);
 
 #endif

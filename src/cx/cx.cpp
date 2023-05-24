@@ -19,7 +19,15 @@ llvm::AllocaInst *create_entry_block_alloca(llvm::Function *function,
 }
 
 bool is_value_number(llvm::Value *value) {
-    return (!value->getType()->isIntegerTy(1)) && (value->getType()->isIntegerTy() || value->getType()->isFloatTy());
+    return (!is_value_boolean(value)) && (value->getType()->isIntegerTy() || value->getType()->isFloatTy());
+}
+
+bool is_value_float(llvm::Value *value) {
+    return value->getType()->isFloatTy() || value->getType()->isDoubleTy();
+}
+
+bool is_value_integer(llvm::Value *value) {
+    return !is_value_boolean(value) && value->getType()->isIntegerTy();
 }
 
 bool is_value_boolean(llvm::Value *value) {

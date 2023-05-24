@@ -5,7 +5,7 @@ int current_token;
 
 std::string identifier;
 int integer_number;
-double float_number;
+float float_number;
 bool boolean;
 
 int get_character() {
@@ -57,6 +57,9 @@ int get_token() {
         if (identifier == "false") {
             boolean = false;
             return tok_false;
+        }
+        if (identifier == "float") {
+            return tok_float;
         }
         return tok_identifier;
     }

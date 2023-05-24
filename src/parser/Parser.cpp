@@ -70,6 +70,9 @@ std::unique_ptr<ExprAST> parse_declaration_expr() {
         case tok_bool:
             id_type = llvm::Type::getInt1Ty(*context);
             break;
+        case tok_float:
+            id_type = llvm::Type::getFloatTy(*context);
+            break;
         default:
             log_error("不支持该类型");
             break;
@@ -137,6 +140,8 @@ std::unique_ptr<ExprAST> parse_primary() {
         case tok_int:
             return parse_declaration_expr();
         case tok_bool:
+            return parse_declaration_expr();
+        case tok_float:
             return parse_declaration_expr();
         default:
             std::string error_message = "未知的token: " + std::to_string(current_token);

@@ -19,7 +19,7 @@ llvm::Value *DeclareExprAST::codegen() {
     } else if (type->isIntegerTy()) {  // 整型初始化
         default_value = llvm::ConstantInt::get(type, 0);
     } else if (type->isFloatTy()) {  // 浮点型初始化
-        default_value = llvm::ConstantFP::get(type, 0);
+        default_value = llvm::ConstantFP::get(type, 0.0);
     } else {
         return log_error_v("不支持该类型");
     }

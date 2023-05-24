@@ -11,6 +11,7 @@ enum Token {
     tok_read = -8,
     tok_true = -9,
     tok_false = -10,
+    tok_float = -11,
 
     // 标识符与数字
     tok_identifier = -20,
