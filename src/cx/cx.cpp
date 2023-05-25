@@ -10,6 +10,8 @@ std::map<std::string, llvm::AllocaInst *> named_values;
 
 std::unique_ptr<llvm::legacy::FunctionPassManager> fpm;
 
+std::unique_ptr<llvm::orc::CXJIT> jit;
+
 llvm::AllocaInst *create_entry_block_alloca(llvm::Function *function, 
                                             const std::string &var_name,
                                             llvm::Type *type) {

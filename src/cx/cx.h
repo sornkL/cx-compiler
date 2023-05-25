@@ -1,6 +1,7 @@
 #ifndef __CX_H__
 #define __CX_H__
 
+#include "../include/CXJIT.h"
 #include <llvm/IR/BasicBlock.h>
 #include <llvm/IR/Constants.h>
 #include <llvm/IR/DerivedTypes.h>
@@ -18,6 +19,7 @@ extern std::unique_ptr<llvm::Module> modules;
 extern std::unique_ptr<llvm::IRBuilder<>> builder;
 extern std::map<std::string, llvm::AllocaInst *> named_values;
 extern std::unique_ptr<llvm::legacy::FunctionPassManager> fpm;
+extern std::unique_ptr<llvm::orc::CXJIT> jit;
 
 llvm::AllocaInst *create_entry_block_alloca(llvm::Function *function, 
                                             const std::string &var_name,

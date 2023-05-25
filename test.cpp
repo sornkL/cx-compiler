@@ -16,7 +16,7 @@ static void handle_top_level_expression() {
             function_ir->print(llvm::errs());
             std::cout << std::endl;
 
-            // function_ir->eraseFromParent();
+            function_ir->removeFromParent();
         }
     } else {
         get_next_token();
