@@ -22,6 +22,7 @@ namespace orc {
 class CXJIT {
 private:
     std::unique_ptr<ExecutionSession> es;
+
     DataLayout dl;
     MangleAndInterner mangle;
 
@@ -31,17 +32,18 @@ private:
     JITDylib &main_jd;
 
 public:
-    CXJIT(JITTargetMachineBuilder jtmb, DataLayout dl) 
-            : dl(std::move(dl)), mangle(*es, this->dl), 
-            object_layer(*es, []() { return std::make_unique<SectionMemoryManager>(); }),
-            compile_layer(*es, object_layer, std::make_unique<ConcurrentIRCompiler>(std::move(jtmb))),
-            main_jd(es->createBareJITDylib("<main>")) {
-        main_jd.addGenerator(cantFail(DynamicLibrarySearchGenerator::GetForCurrentProcess(dl.getGlobalPrefix())));
-        if (jtmb.getTargetTriple().isOSBinFormatCOFF()) {
-            object_layer.setOverrideObjectFlagsWithResponsibilityFlags(true);
-            object_layer.setAutoClaimResponsibilityForObjectSymbols(true);
-        }
-    }
+    CXJIT(std::unique_ptr<ExecutionSession> es, JITTargetMachineBuilder jtmb, DataLayout dl)
+        : es(std::move(es)), dl(std::move(dl)), mangle(*this->es, this->dl), 
+          object_layer(*this->es, []() { return std::make_unique<SectionMemoryManager>(); }),
+          compile_layer(*this->es, object_layer, std::make_unique<ConcurrentIRCompiler>(std::move(jtmb))),
+          main_jd(this->es->createBareJITDylib("<main>")) {
+          main_jd.addGenerator(cantFail(DynamicLibrarySearchGenerator::GetForCurrentProcess(
+              dl.getGlobalPrefix())));
+      if (jtmb.getTargetTriple().isOSBinFormatCOFF()) {
+        object_layer.setOverrideObjectFlagsWithResponsibilityFlags(true);
+        object_layer.setAutoClaimResponsibilityForObjectSymbols(true);
+      }
+  }
 
     ~CXJIT() {
         if (auto err = es->endSession()) {
@@ -55,7 +57,7 @@ public:
             return epc.takeError();
         }
 
-        es = std::make_unique<ExecutionSession>(std::move(*epc));
+        auto es = std::make_unique<ExecutionSession>(std::move(*epc));
 
         JITTargetMachineBuilder jtmb(es->getExecutorProcessControl().getTargetTriple());
 
@@ -64,7 +66,7 @@ public:
             return dl.takeError();
     }
 
-    return std::make_unique<CXJIT>(std::move(jtmb), std::move(*dl));
+    return std::make_unique<CXJIT>(std::move(es), std::move(jtmb), std::move(*dl));
 }
 
     const DataLayout &get_data_layout() const;
