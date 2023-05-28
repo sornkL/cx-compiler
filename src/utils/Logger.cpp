@@ -15,3 +15,13 @@ llvm::Value *log_error_v(const char *str) {
     std::cerr << "Error: " << str << std::endl;
     return nullptr;
 }
+
+std::unique_ptr<PrototypeAST> log_error_p(const char *str) {
+    std::cerr << "Error: " << str << std::endl;
+    return nullptr;
+}
+
+std::unique_ptr<BlockAST> log_error_b(const char *str) {
+    std::cerr << "Error: " << str << std::endl;
+    return nullptr;
+}

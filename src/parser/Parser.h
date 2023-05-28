@@ -1,4 +1,5 @@
 #include "../ast/ExprAST.h"
+#include "../ast/BlockAST.h"
 #include "../ast/FunctionAST.h"
 #include "../lexer/Lexer.h"
 #include <map>
@@ -8,6 +9,8 @@
 extern std::map<int, int> binary_op_precedence;
 
 std::unique_ptr<ExprAST> parse_expression();
+
+std::unique_ptr<BlockAST> parse_block_expression();
 
 std::unique_ptr<ExprAST> parse_integer_number_expr();
 
@@ -25,8 +28,12 @@ std::unique_ptr<ExprAST> parse_if_expression();
 
 std::unique_ptr<ExprAST> parse_while_expression();
 
+std::unique_ptr<PrototypeAST> parse_prototype();
+
 std::unique_ptr<ExprAST> parse_primary();
 
 std::unique_ptr<ExprAST> parse_binary_op_rhs(int expr_prec, std::unique_ptr<ExprAST> lhs);
 
 std::unique_ptr<FunctionAST> parse_top_level_expression();
+
+std::unique_ptr<FunctionAST> parse_function_definition();

@@ -9,19 +9,7 @@ CXXFLAGS := -std=c++17 -g -Wall -Wextra \
 INCLUDE_DIRS := -I./src
 
 # Source files to compile
-SRCS := ./src/lexer/Lexer.cpp \
-		./src/utils/Logger.cpp \
-		./src/include/CXJIT.cpp \
-		./src/cx/CX.cpp \
-		./src/ast/VariableExprAST.cpp \
-		./src/ast/BinaryExprAST.cpp \
-		./src/ast/BooleanExprAST.cpp \
-		./src/ast/NumberExprAST.cpp \
-		./src/ast/PrototypeAST.cpp \
-		./src/ast/FunctionAST.cpp \
-		./src/ast/DeclareExprAST.cpp \
-		./src/parser/Parser.cpp \
-        ./test.cpp
+SRCS := $(wildcard ./src/*.cpp ./src/*/*.cpp) ./test.cpp
 
 # Object files to build
 OBJS := $(SRCS:.cpp=.o)

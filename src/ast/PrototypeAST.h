@@ -1,4 +1,6 @@
 #include "ExprAST.h"
+#ifndef __PROTOTYPE_AST_H__
+#define __PROTOTYPE_AST_H__
 #include "../cx/CX.h"
 #include <llvm/IR/Type.h>
 #include <string>
@@ -21,3 +23,7 @@ public:
 
     void set_return_type(llvm::Type *return_type);
 };
+
+extern std::map<std::string, std::unique_ptr<PrototypeAST>> function_protos;
+
+#endif

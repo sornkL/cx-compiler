@@ -20,6 +20,19 @@ llvm::AllocaInst *create_entry_block_alloca(llvm::Function *function,
     return temp.CreateAlloca(type, nullptr, var_name);
 }
 
+llvm::Function *get_function(std::string name) {
+    if (auto *function = modules->getFunction(name)) {
+        return function;
+    }
+
+    auto proto = function_protos.find(name);
+    if (proto != function_protos.end()) {
+        return proto->second->codegen();
+    }
+
+    return nullptr;
+}
+
 bool is_value_number(llvm::Value *value) {
     return (!is_value_boolean(value)) && (value->getType()->isIntegerTy() || value->getType()->isFloatTy());
 }

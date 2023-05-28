@@ -12,6 +12,7 @@ enum Token {
     tok_true = -9,
     tok_false = -10,
     tok_float = -11,
+    tok_func = -12,
 
     // 标识符与数字
     tok_identifier = -20,
@@ -32,4 +33,5 @@ enum Token {
     tok_eq = -40,   // ==
     tok_ne = -41,   // !=
     tok_assign = -42,   // =
+    tok_arrow = -43,   // ->
 };

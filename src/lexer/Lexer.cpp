@@ -61,6 +61,9 @@ int get_token() {
         if (identifier == "float") {
             return tok_float;
         }
+        if (identifier == "func") {
+            return tok_func;
+        }
         return tok_identifier;
     }
 
@@ -118,6 +121,10 @@ int get_token() {
         return tok_add;
     case '-':
         last_char = get_character();
+        if (last_char == '>') {
+            last_char = get_character();
+            return tok_arrow;
+        }
         return tok_sub;
     case '*':
         last_char = get_character();

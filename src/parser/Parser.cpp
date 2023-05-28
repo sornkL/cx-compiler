@@ -1,5 +1,6 @@
 #include "../ast/BinaryExprAST.h"
 #include "../ast/BooleanExprAST.h"
+#include "../ast/CallExprAST.h"
 #include "../ast/ExprAST.h"
 #include "../ast/NumberExprAST.h"
 #include "../ast/VariableExprAST.h"
@@ -41,6 +42,22 @@ std::unique_ptr<ExprAST> parse_expression() {
         return nullptr;
     }
     return parse_binary_op_rhs(0, std::move(lhs));
+}
+
+std::unique_ptr<BlockAST> parse_block_expression() {
+    std::vector<std::unique_ptr<ExprAST>> result;
+    while (current_token != '}') {
+        if (current_token == tok_eof) {
+            return log_error_b("缺失 '}'");
+        }
+        auto expr = parse_expression();
+        get_next_token();
+        if (!expr) {
+            return log_error_b("表达式错误");
+        }
+        result.push_back(std::move(expr));
+    }
+    return std::make_unique<BlockAST>(std::move(result));
 }
 
 std::unique_ptr<ExprAST> parse_integer_number_expr() {
@@ -111,8 +128,29 @@ std::unique_ptr<ExprAST> parse_identifier_expr() {
         return std::make_unique<VariableExprAST>(id_name);
     }
 
-    // todo 支持函数中的标识符parse
-    return nullptr;
+    get_next_token();
+    std::vector<std::unique_ptr<ExprAST>> args;
+    if (current_token != ')') {
+        while (true) {
+            if (auto arg = parse_expression()) {
+                args.push_back(std::move(arg));
+            } else {
+                return nullptr;
+            }
+
+            if (current_token == ')') {
+                break;
+            }
+
+            if (current_token != ',') {
+                return log_error("缺失 ','");
+            }
+            get_next_token();
+        }
+    }
+
+    get_next_token();
+    return std::make_unique<CallExprAST>(id_name, std::move(args));
 }
 
 std::unique_ptr<ExprAST> parse_if_expression() {
@@ -121,6 +159,84 @@ std::unique_ptr<ExprAST> parse_if_expression() {
 
 std::unique_ptr<ExprAST> parse_while_expression() {
     return log_error("Not Implemented");
+}
+
+std::unique_ptr<PrototypeAST> parse_prototype() {
+    std::string function_name = identifier;
+
+    get_next_token();
+    if (current_token != '(') {
+        return log_error_p("缺失 '('");
+    }
+
+    std::vector<std::pair<std::string, llvm::Type *>> args;
+    std::pair<std::string, llvm::Type *> temp_arg;
+    std::string temp_arg_name;
+    llvm::Type *temp_arg_type = nullptr;
+    bool has_args = false;
+    get_next_token();
+    while (current_token == tok_int ||
+           current_token == tok_bool || 
+           current_token == tok_float || 
+           current_token == ':' || 
+           current_token == ',' || 
+           current_token == tok_identifier) {
+        switch (current_token) {
+            case tok_int:
+                temp_arg_type = llvm::Type::getInt32Ty(*context);
+                break;
+            case tok_bool:
+                temp_arg_type = llvm::Type::getInt1Ty(*context);
+                break;
+            case tok_float:
+                temp_arg_type = llvm::Type::getFloatTy(*context);
+                break;
+            case tok_identifier:
+                temp_arg_name = identifier;
+                break;
+            case ':':
+                break;
+            case ',':
+                temp_arg = std::make_pair(temp_arg_name, temp_arg_type);
+                args.push_back(temp_arg);
+                break;
+            default:
+                break;
+        }
+        has_args = true;
+        get_next_token();
+    }
+    if (current_token != ')') {
+        return log_error_p("缺失 ')'");
+    }
+
+    if (has_args) {
+        temp_arg = std::make_pair(temp_arg_name, temp_arg_type);
+        args.push_back(temp_arg);
+    }
+    get_next_token();
+    
+    llvm::Type *return_type = llvm::Type::getVoidTy(*context);
+    if (current_token != tok_arrow) {
+        return std::make_unique<PrototypeAST>(function_name, args, return_type);
+    }
+    get_next_token();
+    switch (current_token) {
+        case tok_int:
+            return_type = llvm::Type::getInt32Ty(*context);
+            break;
+        case tok_bool:
+            return_type = llvm::Type::getInt1Ty(*context);
+            break;
+        case tok_float:
+            return_type = llvm::Type::getFloatTy(*context);
+            break;
+        default:
+            return log_error_p("无返回类型或不支持该返回类型");
+            break;
+    }
+    get_next_token();
+    return std::make_unique<PrototypeAST>(function_name, args, return_type);
 }
 
 std::unique_ptr<ExprAST> parse_primary() {
@@ -177,11 +293,27 @@ std::unique_ptr<ExprAST> parse_binary_op_rhs(int expr_prec, std::unique_ptr<Expr
 }
 
 std::unique_ptr<FunctionAST> parse_top_level_expression() {
-    if (auto expr = parse_expression()) {
+    get_next_token();
+    if (auto body = parse_block_expression()) {
         llvm::Type *return_type = llvm::Type::getInt32Ty(*context);  // 默认返回类型为int
 
         auto proto = std::make_unique<PrototypeAST>("__anon_expr", std::vector<std::pair<std::string, llvm::Type *>>(), return_type);
-        return std::make_unique<FunctionAST>(std::move(proto), std::move(expr));
+        return std::make_unique<FunctionAST>(std::move(proto), std::move(body));
     }
+    return nullptr;
+}
+
+std::unique_ptr<FunctionAST> parse_function_definition() {
+    get_next_token();
+    auto proto = parse_prototype();
+    if (!proto || current_token != '{') {
+        return nullptr;
+    }
+
+    get_next_token();
+    if (auto body = parse_block_expression()) {
+        return std::make_unique<FunctionAST>(std::move(proto), std::move(body));
+    }
+    get_next_token();
     return nullptr;
 }

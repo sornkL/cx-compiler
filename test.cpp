@@ -23,13 +23,36 @@ static void handle_top_level_expression() {
     }
 }
 
+static void handle_function_definition() {
+    if (auto function_ast = parse_function_definition()) {
+        if (auto *function_ir = function_ast->codegen()) {
+            std::cout << "Read function definition:" << std::endl;
+            function_ir->print(llvm::errs());
+            std::cout << std::endl;
+
+            function_ir->removeFromParent();
+        }
+    } else {
+        get_next_token();
+    }
+}
+
 static void main_loop() {
     while (true) {
         std::cout << ">>> ";
         switch (current_token) {
             case tok_eof:
                 return;
+            case tok_func:
+                handle_function_definition();
+                break;
             case ';':
+                get_next_token();
+                break;
+            case '{':
+                handle_top_level_expression();
+                break;
+            case '}':
                 get_next_token();
                 break;
             default:

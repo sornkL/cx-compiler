@@ -2,11 +2,9 @@
 #include "FunctionAST.h"
 
 llvm::Function *FunctionAST::codegen() {
-    llvm::Function *function = modules->getFunction(proto->get_callee());
-
-    if (!function) {
-        function = proto->codegen();
-    }
+    auto &proto_copy = *proto;
+    function_protos[proto->get_callee()] = std::move(proto);
+    llvm::Function *function = get_function(proto_copy.get_callee());
 
     if (!function) {
         return nullptr;

@@ -1,6 +1,8 @@
 #include "ExprAST.h"
 #include "PrototypeAST.h"
 
+std::map<std::string, std::unique_ptr<PrototypeAST>> function_protos;
+
 llvm::Function *PrototypeAST::codegen() {
     std::vector<llvm::Type *> args_types;
     for (const auto &arg : args) {
