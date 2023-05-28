@@ -2,7 +2,7 @@
 #include "FunctionAST.h"
 
 llvm::Function *FunctionAST::codegen() {
-    llvm::Function *function = modules->getFunction(proto->getCallee());
+    llvm::Function *function = modules->getFunction(proto->get_callee());
 
     if (!function) {
         function = proto->codegen();

@@ -18,6 +18,14 @@ llvm::Function *PrototypeAST::codegen() {
     return function;
 }
 
-std::string PrototypeAST::getCallee() const {
+std::string PrototypeAST::get_callee() const {
     return callee;
+}
+
+llvm::Type *PrototypeAST::get_return_type() const {
+    return return_type;
+}
+
+void PrototypeAST::set_return_type(llvm::Type *return_type) {
+    this->return_type = return_type;
 }

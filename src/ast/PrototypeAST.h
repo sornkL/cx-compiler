@@ -15,5 +15,9 @@ public:
 
     llvm::Function *codegen();
 
-    std::string getCallee() const;
+    std::string get_callee() const;
+
+    llvm::Type *get_return_type() const;
+
+    void set_return_type(llvm::Type *return_type);
 };
