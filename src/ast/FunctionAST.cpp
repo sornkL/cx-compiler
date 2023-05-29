@@ -13,7 +13,7 @@ llvm::Function *FunctionAST::codegen() {
     llvm::BasicBlock *basic_block = llvm::BasicBlock::Create(*context, "entry", function);
     builder->SetInsertPoint(basic_block);
 
-    // named_values.clear();
+    named_values.clear();
     for (auto &arg : function->args()) {
         llvm::AllocaInst *alloca = create_entry_block_alloca(function, arg.getName().str(), arg.getType());
         builder->CreateStore(&arg, alloca);
