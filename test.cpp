@@ -1,12 +1,22 @@
 #include "src/lexer/Lexer.h"
 #include "src/parser/Parser.h"
 #include "src/cx/CX.h"
+#include "include/CXJIT.h"
+#include <llvm/ExecutionEngine/Orc/LLJIT.h>
+#include <llvm/Support/TargetSelect.h>
+#include <llvm/Target/TargetMachine.h>
+#include <llvm/Transforms/Scalar.h>
+#include <llvm/Transforms/Utils.h>
 #include <iostream>
+
+static llvm::ExitOnError exit_on_error;
 
 static void initialize_module() {
     context = std::make_unique<llvm::LLVMContext>();
-    builder = std::make_unique<llvm::IRBuilder<>>(*context);
     modules = std::make_unique<llvm::Module>("cx compiler", *context);
+    modules->setDataLayout(jit->get_data_layout());
+
+    builder = std::make_unique<llvm::IRBuilder<>>(*context);
 }
 
 static void handle_top_level_expression() {
@@ -16,7 +26,18 @@ static void handle_top_level_expression() {
             function_ir->print(llvm::errs());
             std::cout << std::endl;
 
-            function_ir->removeFromParent();
+            auto rt = jit->get_main_jit_dylib().createResourceTracker();
+            auto tsm = llvm::orc::ThreadSafeModule(std::move(modules), std::move(context));
+            exit_on_error(jit->add_module(std::move(tsm), rt));
+            // initialize_module();
+
+            auto expr_symbol = jit->lookup("main");
+            int (*fp)() = (int (*)())expr_symbol->getAddress();
+            std::cout << "Evaluated to " << fp() << std::endl;
+
+            exit_on_error(rt->remove());
+
+            // function_ir->removeFromParent();
         }
     } else {
         get_next_token();
@@ -29,8 +50,12 @@ static void handle_function_definition() {
             std::cout << "Read function definition:" << std::endl;
             function_ir->print(llvm::errs());
             std::cout << std::endl;
+            
+            exit_on_error(jit->add_module(llvm::orc::ThreadSafeModule(std::move(modules), std::move(context))));
 
-            function_ir->removeFromParent();
+            initialize_module();
+            
+            // function_ir->removeFromParent();
         }
     } else {
         get_next_token();
@@ -63,8 +88,14 @@ static void main_loop() {
 }
 
 int main(int argc, char *argv[]) {
+    llvm::InitializeNativeTarget();
+    llvm::InitializeNativeTargetAsmPrinter();
+    llvm::InitializeNativeTargetAsmParser();
+
     std::cout << ">>> ";
     get_next_token();
+
+    jit = exit_on_error(llvm::orc::CXJIT::create());
     initialize_module();
 
     main_loop();

@@ -64,10 +64,10 @@ public:
         auto dl = jtmb.getDefaultDataLayoutForTarget();
         if (!dl) {
             return dl.takeError();
-    }
+        }
 
-    return std::make_unique<CXJIT>(std::move(es), std::move(jtmb), std::move(*dl));
-}
+        return std::make_unique<CXJIT>(std::move(es), std::move(jtmb), std::move(*dl));
+    }
 
     const DataLayout &get_data_layout() const;
 

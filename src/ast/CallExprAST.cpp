@@ -13,7 +13,7 @@ llvm::Value *CallExprAST::codegen() {
     std::vector<llvm::Value *> args_values;
     for (unsigned int i=0, e=args.size(); i!=e; ++i) {
         llvm::Value *arg_value = args[i]->codegen();
-        if (arg_value->getType() != callee_function->getArg(i)->getType()) {
+        if (arg_value->getType()->getTypeID() != callee_function->getArg(i)->getType()->getTypeID()) {
             return log_error_v("函数参数类型不匹配");
         }
         args_values.push_back(arg_value);

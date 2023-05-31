@@ -297,7 +297,7 @@ std::unique_ptr<FunctionAST> parse_top_level_expression() {
     if (auto body = parse_block_expression()) {
         llvm::Type *return_type = llvm::Type::getInt32Ty(*context);  // 默认返回类型为int
 
-        auto proto = std::make_unique<PrototypeAST>("__anon_expr", std::vector<std::pair<std::string, llvm::Type *>>(), return_type);
+        auto proto = std::make_unique<PrototypeAST>("main", std::vector<std::pair<std::string, llvm::Type *>>(), return_type);
         return std::make_unique<FunctionAST>(std::move(proto), std::move(body));
     }
     return nullptr;

@@ -21,7 +21,7 @@ llvm::Value *BinaryExprAST::codegen() {
             return log_error_v("变量未定义");
         }
 
-        if (variable->getType() != value->getType()) {
+        if (variable->getType()->getTypeID() != value->getType()->getTypeID()) {
             return log_error_v("变量类型与声明不符");
         }
         builder->CreateStore(value, variable);
