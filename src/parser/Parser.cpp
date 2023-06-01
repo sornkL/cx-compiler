@@ -5,6 +5,7 @@
 #include "../ast/NumberExprAST.h"
 #include "../ast/VariableExprAST.h"
 #include "../ast/DeclareExprAST.h"
+#include "../ast/IfExprAST.h"
 #include "../utils/Logger.h"
 #include "Parser.h"
 #include <string>
@@ -154,7 +155,59 @@ std::unique_ptr<ExprAST> parse_identifier_expr() {
 }
 
 std::unique_ptr<ExprAST> parse_if_expression() {
-    return log_error("Not Implemented");
+    get_next_token();
+
+    if (current_token != '(') {
+        return log_error("缺失 '('");
+    }
+
+    get_next_token();
+    auto condition = parse_expression();
+    if (!condition) {
+        return nullptr;
+    }
+
+    if (current_token != ')') {
+        return log_error("缺失 ')'");
+    }
+
+    get_next_token();
+    if (current_token != '{') {
+        return log_error("缺失 '{'");
+    }
+
+    get_next_token();
+    auto then_block = parse_block_expression();
+    if (!then_block) {
+        return nullptr;
+    }
+
+    if (current_token != '}') {
+        return log_error("缺失 '}'");
+    }
+
+    get_next_token();
+    if (current_token != tok_else) {
+        get_next_token();
+        return std::make_unique<IfExprAST>(std::move(condition), std::move(then_block), nullptr);
+    }
+
+    get_next_token();
+    if (current_token != '{') {
+        return log_error("缺失 '{'");
+    }
+
+    get_next_token();
+    auto else_block = parse_block_expression();
+    if (!else_block) {
+        return nullptr;
+    }
+
+    if (current_token != '}') {
+        return log_error("缺失 '}'");
+    }
+
+    return std::make_unique<IfExprAST>(std::move(condition), std::move(then_block), std::move(else_block));
 }
 
 std::unique_ptr<ExprAST> parse_while_expression() {
@@ -259,6 +312,8 @@ std::unique_ptr<ExprAST> parse_primary() {
             return parse_declaration_expr();
         case tok_float:
             return parse_declaration_expr();
+        case tok_if:
+            return parse_if_expression();
         default:
             std::string error_message = "未知的token: " + std::to_string(current_token);
             return log_error(error_message);
