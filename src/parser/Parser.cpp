@@ -7,6 +7,7 @@
 #include "../ast/DeclareExprAST.h"
 #include "../ast/IfExprAST.h"
 #include "../ast/WriteExprAST.h"
+#include "../ast/ReadExprAST.h"
 #include "../utils/Logger.h"
 #include "Parser.h"
 #include <string>
@@ -225,7 +226,10 @@ std::unique_ptr<ExprAST> parse_write_expression() {
 }
 
 std::unique_ptr<ExprAST> parse_read_expression() {
-    return log_error("Not Implemented");
+    get_next_token();
+    std::string id_name = identifier;
+    get_next_token();
+    return std::make_unique<ReadExprAST>(id_name);
 }
 
 std::unique_ptr<PrototypeAST> parse_prototype() {
@@ -330,6 +334,8 @@ std::unique_ptr<ExprAST> parse_primary() {
             return parse_if_expression();
         case tok_write:
             return parse_write_expression();
+        case tok_read:
+            return parse_read_expression();
         default:
             std::string error_message = "未知的token: " + std::to_string(current_token);
             return log_error(error_message);
