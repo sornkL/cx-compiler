@@ -28,6 +28,10 @@ std::unique_ptr<ExprAST> parse_if_expression();
 
 std::unique_ptr<ExprAST> parse_while_expression();
 
+std::unique_ptr<ExprAST> parse_write_expression();
+
+std::unique_ptr<ExprAST> parse_read_expression();
+
 std::unique_ptr<PrototypeAST> parse_prototype();
 
 std::unique_ptr<ExprAST> parse_primary();

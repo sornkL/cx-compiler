@@ -6,6 +6,7 @@
 #include "../ast/VariableExprAST.h"
 #include "../ast/DeclareExprAST.h"
 #include "../ast/IfExprAST.h"
+#include "../ast/WriteExprAST.h"
 #include "../utils/Logger.h"
 #include "Parser.h"
 #include <string>
@@ -214,6 +215,19 @@ std::unique_ptr<ExprAST> parse_while_expression() {
     return log_error("Not Implemented");
 }
 
+std::unique_ptr<ExprAST> parse_write_expression() {
+    get_next_token();
+    std::unique_ptr<ExprAST> expr = parse_expression();
+    if (!expr) {
+        return log_error("表达式错误");
+    }
+    return std::make_unique<WriteExprAST>(std::move(expr));
+}
+
+std::unique_ptr<ExprAST> parse_read_expression() {
+    return log_error("Not Implemented");
+}
+
 std::unique_ptr<PrototypeAST> parse_prototype() {
     std::string function_name = identifier;
 
@@ -314,6 +328,8 @@ std::unique_ptr<ExprAST> parse_primary() {
             return parse_declaration_expr();
         case tok_if:
             return parse_if_expression();
+        case tok_write:
+            return parse_write_expression();
         default:
             std::string error_message = "未知的token: " + std::to_string(current_token);
             return log_error(error_message);
@@ -350,7 +366,7 @@ std::unique_ptr<ExprAST> parse_binary_op_rhs(int expr_prec, std::unique_ptr<Expr
 std::unique_ptr<FunctionAST> parse_top_level_expression() {
     get_next_token();
     if (auto body = parse_block_expression()) {
-        llvm::Type *return_type = llvm::Type::getInt32Ty(*context);  // 默认返回类型为int
+        llvm::Type *return_type = llvm::Type::getVoidTy(*context);  // 默认返回类型为void
 
         auto proto = std::make_unique<PrototypeAST>("main", std::vector<std::pair<std::string, llvm::Type *>>(), return_type);
         return std::make_unique<FunctionAST>(std::move(proto), std::move(body));

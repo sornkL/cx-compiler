@@ -32,8 +32,9 @@ static void handle_top_level_expression() {
             // initialize_module();
 
             auto expr_symbol = jit->lookup("main");
-            int (*fp)() = (int (*)())expr_symbol->getAddress();
-            std::cout << "Evaluated to " << fp() << std::endl;
+            void (*fp)() = (void (*)())expr_symbol->getAddress();
+            // std::cout << "Evaluated to " << fp() << std::endl;
+            fp();
 
             exit_on_error(rt->remove());
 
