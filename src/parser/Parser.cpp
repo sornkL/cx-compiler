@@ -6,6 +6,7 @@
 #include "../ast/VariableExprAST.h"
 #include "../ast/DeclareExprAST.h"
 #include "../ast/IfExprAST.h"
+#include "../ast/WhileExprAST.h"
 #include "../ast/WriteExprAST.h"
 #include "../ast/ReadExprAST.h"
 #include "../utils/Logger.h"
@@ -213,7 +214,37 @@ std::unique_ptr<ExprAST> parse_if_expression() {
 }
 
 std::unique_ptr<ExprAST> parse_while_expression() {
-    return log_error("Not Implemented");
+    get_next_token();
+    if (current_token != '(') {
+        return log_error("缺失 '('");
+    }
+
+    get_next_token();
+    auto condition = parse_expression();
+    if (!condition) {
+        return nullptr;
+    }
+
+    if (current_token != ')') {
+        return log_error("缺失 ')'");
+    }
+
+    get_next_token();
+    if (current_token != '{') {
+        return log_error("缺失 '{'");
+    }
+
+    get_next_token();
+    auto body = parse_block_expression();
+    if (!body) {
+        return nullptr;
+    }
+
+    if (current_token != '}') {
+        return log_error("缺失 '}'");
+    }
+
+    return std::make_unique<WhileExprAST>(std::move(condition), std::move(body));
 }
 
 std::unique_ptr<ExprAST> parse_write_expression() {
@@ -332,6 +363,8 @@ std::unique_ptr<ExprAST> parse_primary() {
             return parse_declaration_expr();
         case tok_if:
             return parse_if_expression();
+        case tok_while:
+            return parse_while_expression();
         case tok_write:
             return parse_write_expression();
         case tok_read:
