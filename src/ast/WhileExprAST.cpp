@@ -23,7 +23,8 @@ llvm::Value *WhileExprAST::codegen() {
         return nullptr;
     }
 
-    builder->CreateBr(condition_block);
+    cond = condition->codegen();
+    builder->CreateCondBr(cond, body_block, end_block);
     builder->SetInsertPoint(end_block);
 
     return body_value;

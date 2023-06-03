@@ -5,7 +5,7 @@
 
 llvm::Value *BinaryExprAST::codegen() {
     if (op_token == tok_assign) {
-        VariableExprAST *lhse = static_cast<VariableExprAST *>(lhs.get());
+        VariableExprAST *lhse = dynamic_cast<VariableExprAST *>(lhs.get());
         if (!lhse) {
             return log_error_v("= 左边必须是变量");
         }
@@ -15,17 +15,16 @@ llvm::Value *BinaryExprAST::codegen() {
             return nullptr;
         }
 
-        llvm::AllocaInst *alloca = named_values[lhse->get_name()];
-        llvm::Value *variable = builder->CreateLoad(alloca->getAllocatedType(), alloca, lhse->get_name());
+        llvm::AllocaInst *variable = named_values[lhse->get_name()];
         if (!variable) {
             return log_error_v("变量未定义");
         }
 
-        if (variable->getType()->getTypeID() != value->getType()->getTypeID()) {
+        if (variable->getAllocatedType()->getTypeID() != value->getType()->getTypeID()) {
             return log_error_v("变量类型与声明不符");
         }
         builder->CreateStore(value, variable);
-        return value;
+        return variable;
     }
 
     auto lhs_value = lhs->codegen();
