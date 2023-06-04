@@ -1,5 +1,6 @@
 #include "Lexer.h"
 #include <iostream>
+#include <fstream>
 
 int current_token;
 
@@ -9,11 +10,19 @@ float float_number;
 bool boolean;
 
 int get_character() {
-    return getchar();
+    if (is_input_file) {
+        return input_file.get();
+    } else {
+        return getchar();
+    }
 }
 
 void unget_character(int c) {
-    ungetc(c, stdin);
+    if (is_input_file) {
+        input_file.unget();
+    } else {
+        ungetc(c, stdin);
+    }
 }
 
 int get_token() {

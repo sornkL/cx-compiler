@@ -9,13 +9,13 @@ CXXFLAGS := -std=c++17 -g -Wall -Wextra \
 INCLUDE_DIRS := -I./src
 
 # Source files to compile
-SRCS := $(wildcard ./src/*.cpp ./src/*/*.cpp) ./test.cpp
+SRCS := $(wildcard ./src/*.cpp ./src/*/*.cpp) ./cxc.cpp
 
 # Object files to build
 OBJS := $(SRCS:.cpp=.o)
 
 # Name of the output executable
-TARGET := test.out
+TARGET := cxc.out
 
 all: $(TARGET)
 

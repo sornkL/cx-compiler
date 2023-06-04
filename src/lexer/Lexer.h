@@ -1,6 +1,7 @@
 #ifndef __LEXER_H__
 #define __LEXER_H__
 #include "Token.h"
+#include "../utils/CLI.h"
 #include <string>
 
 extern int current_token;  // 当前的token
