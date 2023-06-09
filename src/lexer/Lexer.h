@@ -5,6 +5,7 @@
 #include <string>
 
 extern int current_token;  // 当前的token
+extern bool skip_get_next_token;  // 是否要跳过读取下一个字符
 
 extern std::string identifier;  // 标识符
 extern int integer_number;  // 整数

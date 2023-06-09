@@ -18,7 +18,6 @@ llvm::Value *WriteExprAST::codegen() {
     llvm::Value *format_string = nullptr;
     if (expr_value->getType()->isIntegerTy()) {
         format_string = builder->CreateGlobalStringPtr("%d");
-        expr_value = builder->CreateIntCast(expr_value, llvm::Type::getInt32Ty(*context), true);
     } else {
         format_string = builder->CreateGlobalStringPtr("%lf");
         expr_value = builder->CreateFPExt(expr_value, llvm::Type::getDoubleTy(*context));

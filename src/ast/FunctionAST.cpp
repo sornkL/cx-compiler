@@ -21,7 +21,9 @@ llvm::Function *FunctionAST::codegen() {
     }
 
     if (llvm::Value *ret = body->codegen()) {
-        builder->CreateRet(ret);
+        if (function->getReturnType()->isVoidTy()) {
+            builder->CreateRetVoid();
+        }
         llvm::verifyFunction(*function);
         // fpm->run(*function);
         return function;

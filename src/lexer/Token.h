@@ -13,6 +13,7 @@ enum Token {
     tok_false = -10,
     tok_float = -11,
     tok_func = -12,
+    tok_return = -13,
 
     // 标识符与数字
     tok_identifier = -20,

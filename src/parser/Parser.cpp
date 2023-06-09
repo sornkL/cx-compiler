@@ -9,6 +9,7 @@
 #include "../ast/WhileExprAST.h"
 #include "../ast/WriteExprAST.h"
 #include "../ast/ReadExprAST.h"
+#include "../ast/ReturnExprAST.h"
 #include "../utils/Logger.h"
 #include "Parser.h"
 #include <string>
@@ -191,7 +192,7 @@ std::unique_ptr<ExprAST> parse_if_expression() {
 
     get_next_token();
     if (current_token != tok_else) {
-        get_next_token();
+        skip_get_next_token = true;
         return std::make_unique<IfExprAST>(std::move(condition), std::move(then_block), nullptr);
     }
 
@@ -261,6 +262,15 @@ std::unique_ptr<ExprAST> parse_read_expression() {
     std::string id_name = identifier;
     get_next_token();
     return std::make_unique<ReadExprAST>(id_name);
+}
+
+std::unique_ptr<ExprAST> parse_return_expression() {
+    get_next_token();
+    std::unique_ptr<ExprAST> expr = parse_expression();
+    if (!expr) {
+        return log_error("表达式错误");
+    }
+    return std::make_unique<ReturnExprAST>(std::move(expr));
 }
 
 std::unique_ptr<PrototypeAST> parse_prototype() {
@@ -369,6 +379,8 @@ std::unique_ptr<ExprAST> parse_primary() {
             return parse_write_expression();
         case tok_read:
             return parse_read_expression();
+        case tok_return:
+            return parse_return_expression();
         default:
             std::string error_message = "未知的token: " + std::to_string(current_token);
             return log_error(error_message);

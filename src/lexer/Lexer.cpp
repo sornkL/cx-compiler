@@ -3,6 +3,7 @@
 #include <fstream>
 
 int current_token;
+bool skip_get_next_token;
 
 std::string identifier;
 int integer_number;
@@ -72,6 +73,9 @@ int get_token() {
         }
         if (identifier == "func") {
             return tok_func;
+        }
+        if (identifier == "return") {
+            return tok_return;
         }
         return tok_identifier;
     }
@@ -194,6 +198,10 @@ int get_token() {
 }
 
 int get_next_token() {
-    current_token = get_token();
+    if (!skip_get_next_token) {
+        current_token = get_token();
+    } else {
+        skip_get_next_token = false;
+    }
     return current_token;
 }
