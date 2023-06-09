@@ -1,3 +1,6 @@
+#ifndef __TOKEN_H__
+#define __TOKEN_H__
+
 enum Token {
     tok_eof = -1,
 
@@ -35,4 +38,9 @@ enum Token {
     tok_ne = -41,   // !=
     tok_assign = -42,   // =
     tok_arrow = -43,   // ->
+
+    // 一元运算符
+    tok_not = -50,  // !
 };
+
+#endif

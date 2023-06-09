@@ -186,6 +186,7 @@ int get_token() {
             last_char = get_character();
             return tok_ne;
         }
+        return tok_not;
     }
 
     if (last_char == EOF) {

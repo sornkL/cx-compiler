@@ -1,4 +1,5 @@
 #include "../ast/BinaryExprAST.h"
+#include "../ast/UnaryExprAST.h"
 #include "../ast/BooleanExprAST.h"
 #include "../ast/CallExprAST.h"
 #include "../ast/ExprAST.h"
@@ -42,7 +43,7 @@ static int get_token_precedence() {
 }
 
 std::unique_ptr<ExprAST> parse_expression() {
-    auto lhs = parse_primary();
+    auto lhs = parse_unary();
     if (!lhs) {
         return nullptr;
     }
@@ -397,7 +398,7 @@ std::unique_ptr<ExprAST> parse_binary_op_rhs(int expr_prec, std::unique_ptr<Expr
         int bin_op = current_token;
         get_next_token();
 
-        auto rhs = parse_primary();
+        auto rhs = parse_unary();
         if (!rhs) {
             return nullptr;
         }
@@ -412,6 +413,19 @@ std::unique_ptr<ExprAST> parse_binary_op_rhs(int expr_prec, std::unique_ptr<Expr
 
         lhs = std::make_unique<BinaryExprAST>("+", bin_op, std::move(lhs), std::move(rhs));  // todo: 支持多种binop的字符串表示，需要实现token2str用于返回表示binop的字符串 
     }
+}
+
+std::unique_ptr<ExprAST> parse_unary() {
+    if (current_token != tok_not) {
+        return parse_primary();
+    }
+
+    int unary_op = current_token;
+    get_next_token();
+    if (auto operand = parse_unary()) {
+        return std::make_unique<UnaryExprAST>(unary_op, std::move(operand));
+    }
+    return nullptr;
 }
 
 std::unique_ptr<FunctionAST> parse_top_level_expression() {

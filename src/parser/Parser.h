@@ -40,6 +40,8 @@ std::unique_ptr<ExprAST> parse_primary();
 
 std::unique_ptr<ExprAST> parse_binary_op_rhs(int expr_prec, std::unique_ptr<ExprAST> lhs);
 
+std::unique_ptr<ExprAST> parse_unary();
+
 std::unique_ptr<FunctionAST> parse_top_level_expression();
 
 std::unique_ptr<FunctionAST> parse_function_definition();
