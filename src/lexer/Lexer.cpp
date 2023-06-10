@@ -187,6 +187,12 @@ int get_token() {
             return tok_ne;
         }
         return tok_not;
+    case '%':
+        last_char = get_character();
+        return tok_mod;
+    case '^':
+        last_char = get_character();
+        return tok_xor;
     }
 
     if (last_char == EOF) {

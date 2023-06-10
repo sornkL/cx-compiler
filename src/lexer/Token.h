@@ -38,6 +38,8 @@ enum Token {
     tok_ne = -41,   // !=
     tok_assign = -42,   // =
     tok_arrow = -43,   // ->
+    tok_mod = -44,  // %
+    tok_xor = -45,  // ^
 
     // 一元运算符
     tok_not = -50,  // !

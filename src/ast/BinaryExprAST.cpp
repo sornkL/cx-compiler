@@ -40,6 +40,8 @@ llvm::Value *BinaryExprAST::codegen() {
                 return builder->CreateAnd(lhs_value, rhs_value, "andtmp");
             case tok_or:
                 return builder->CreateOr(lhs_value, rhs_value, "ortmp");
+            case tok_xor:
+                return builder->CreateXor(lhs_value, rhs_value, "xortmp");
             default:
                 return log_error_v("该运算符不支持布尔类型");
         }
@@ -131,6 +133,11 @@ llvm::Value *BinaryExprAST::codegen() {
                 if (is_value_float(lhs_value) && is_value_float(rhs_value)) {
                     auto res = builder->CreateFCmpUNE(lhs_value, rhs_value, "netmp");
                     return builder->CreateFPToUI(res, llvm::Type::getInt1Ty(*context), "netmp");
+                }
+                break;
+            case tok_mod:
+                if (is_value_integer(lhs_value) && is_value_integer(rhs_value)) {
+                    return builder->CreateSRem(lhs_value, rhs_value, "modtmp");
                 }
                 break;
             default:
