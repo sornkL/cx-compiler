@@ -17,6 +17,7 @@ enum Token {
     tok_float = -11,
     tok_func = -12,
     tok_return = -13,
+    tok_for = -14,
 
     // 标识符与数字
     tok_identifier = -20,

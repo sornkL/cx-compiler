@@ -77,6 +77,9 @@ int get_token() {
         if (identifier == "return") {
             return tok_return;
         }
+        if (identifier == "for") {
+            return tok_for;
+        }
         return tok_identifier;
     }
 

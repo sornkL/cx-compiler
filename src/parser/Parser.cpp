@@ -8,6 +8,7 @@
 #include "../ast/DeclareExprAST.h"
 #include "../ast/IfExprAST.h"
 #include "../ast/WhileExprAST.h"
+#include "../ast/ForExprAST.h"
 #include "../ast/WriteExprAST.h"
 #include "../ast/ReadExprAST.h"
 #include "../ast/ReturnExprAST.h"
@@ -251,6 +252,60 @@ std::unique_ptr<ExprAST> parse_while_expression() {
     return std::make_unique<WhileExprAST>(std::move(condition), std::move(body));
 }
 
+std::unique_ptr<ExprAST> parse_for_expression() {
+    get_next_token();
+    if (current_token != '(') {
+        return log_error("缺失 '('");
+    }
+
+    get_next_token();
+    auto init = parse_expression();
+    if (!init) {
+        return nullptr;
+    }
+
+    if (current_token != ';') {
+        return log_error("缺失 ';'");
+    }
+
+    get_next_token();
+    auto condition = parse_expression();
+    if (!condition) {
+        return nullptr;
+    }
+
+    if (current_token != ';') {
+        return log_error("缺失 ';'");
+    }
+
+    get_next_token();
+    auto increment = parse_expression();
+    if (!increment) {
+        return nullptr;
+    }
+
+    if (current_token != ')') {
+        return log_error("缺失 ')'");
+    }
+
+    get_next_token();
+    if (current_token != '{') {
+        return log_error("缺失 '{'");
+    }
+
+    get_next_token();
+    auto body = parse_block_expression();
+    if (!body) {
+        return nullptr;
+    }
+
+    if (current_token != '}') {
+        return log_error("缺失 '}'");
+    }
+
+    return std::make_unique<ForExprAST>(std::move(init), std::move(condition), std::move(increment), std::move(body));
+}
+
 std::unique_ptr<ExprAST> parse_write_expression() {
     get_next_token();
     std::unique_ptr<ExprAST> expr = parse_expression();
@@ -384,6 +439,8 @@ std::unique_ptr<ExprAST> parse_primary() {
             return parse_read_expression();
         case tok_return:
             return parse_return_expression();
+        case tok_for:
+            return parse_for_expression();
         default:
             std::string error_message = "未知的token: " + std::to_string(current_token);
             return log_error(error_message);
