@@ -12,6 +12,8 @@ extern int integer_number;  // 整数
 extern float float_number;  // 浮点数
 extern bool boolean;  // 布尔值
 
+extern int lineno;  // 当前行号
+
 
 int get_character();
 

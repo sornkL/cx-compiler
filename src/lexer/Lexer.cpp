@@ -10,12 +10,19 @@ int integer_number;
 float float_number;
 bool boolean;
 
+int lineno;
+
 int get_character() {
+    int cur_char;
     if (is_input_file) {
-        return input_file.get();
+        cur_char = input_file.get();
     } else {
-        return getchar();
+        cur_char = getchar();
     }
+    if (cur_char == '\n') {
+        lineno++;
+    }
+    return cur_char;
 }
 
 void unget_character(int c) {
@@ -105,29 +112,28 @@ int get_token() {
     }
 
     if (last_char == '/') {  // 处理注释
-        int next_char = get_character();
-        if (next_char == '/') {  // 单行注释
-            while (last_char != '\n' && last_char != EOF) {
+        last_char = get_character();
+        if (last_char == '/') {  // 单行注释
+            do {
                 last_char = get_character();
-            }
+            } while (last_char != EOF && last_char != '\n');
+
             if (last_char != EOF) {
                 return get_token();
             }
-        } else if (next_char == '*') {  // 多行注释
-            last_char = ' ';
-            next_char = get_character();
-            while (last_char != '*' || next_char != '/') {
-                last_char = next_char;
-                next_char = get_character();
-                if (next_char == EOF) {
-                    break;
+        } else if (last_char == '*') {  // 多行注释
+            do {
+                last_char = get_character();
+                if (last_char == '*') {
+                    last_char = get_character();
+                    if (last_char == '/') {
+                        last_char = get_character();
+                        return get_token();
+                    }
                 }
-            }
-            if (last_char == '*' && next_char == '/') {
-                return get_token();
-            }
-        } else {  // 不是注释
-            unget_character(next_char);
+            } while (last_char != EOF);
+        } else {
+            return tok_div;
         }
     }
 
