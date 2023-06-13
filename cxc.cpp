@@ -9,6 +9,9 @@
 #include <llvm/Transforms/Scalar.h>
 #include <llvm/Transforms/Utils.h>
 #include <llvm/Support/FileSystem.h>
+#include <llvm/IR/PassManager.h>
+#include <llvm/Transforms/InstCombine/InstCombine.h>
+#include <llvm/Transforms/Scalar/GVN.h>
 #include <iostream>
 #include <fstream>
 
@@ -20,6 +23,15 @@ static void initialize_module() {
     modules->setDataLayout(jit->get_data_layout());
 
     builder = std::make_unique<llvm::IRBuilder<>>(*context);
+
+    if (is_optimize) {
+        fpm = std::make_unique<llvm::legacy::FunctionPassManager>(modules.get());
+        fpm->add(llvm::createInstructionCombiningPass());
+        fpm->add(llvm::createReassociatePass());
+        fpm->add(llvm::createGVNPass());
+        fpm->add(llvm::createCFGSimplificationPass());
+        fpm->doInitialization();
+    }
 }
 
 static void handle_top_level_expression() {

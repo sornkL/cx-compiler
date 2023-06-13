@@ -5,6 +5,7 @@
 #include <fstream>
 
 extern bool is_input_file;
+extern bool is_optimize;
 extern std::string input_filename;
 extern std::string output_filename;
 

@@ -25,7 +25,9 @@ llvm::Function *FunctionAST::codegen() {
             builder->CreateRetVoid();
         }
         llvm::verifyFunction(*function);
-        // fpm->run(*function);
+        if (is_optimize) {
+            fpm->run(*function);
+        }
         return function;
     }
 

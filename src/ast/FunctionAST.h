@@ -2,6 +2,7 @@
 #include "BlockAST.h"
 #include "PrototypeAST.h"
 #include "../cx/CX.h"
+#include "../utils/CLI.h"
 
 class FunctionAST {
 private:

@@ -1,14 +1,15 @@
 #include "CLI.h"
 
 bool is_input_file;
+bool is_optimize;
 std::string input_filename;
 std::string output_filename;
 
 std::ifstream input_file;
 
 /**
- * cxc -i
- * cxc -o <output_filename.ll> <input_filename.cx>
+ * cxc -i [-O]
+ * cxc -o <output_filename.ll> <input_filename.cx> [-O]
  */
 void parse_command(int argc, char *argv[]) {
     for (int i=1; i<argc; ++i) {
@@ -23,6 +24,10 @@ void parse_command(int argc, char *argv[]) {
                 is_input_file = true;
                 output_filename = argv[++i];
                 input_filename = argv[++i];
+                break;
+            case 'O':
+                // -O 表示优化IR
+                is_optimize = true;
                 break;
             }
         }
