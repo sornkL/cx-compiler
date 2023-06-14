@@ -12,6 +12,7 @@
 #include "../ast/WriteExprAST.h"
 #include "../ast/ReadExprAST.h"
 #include "../ast/ReturnExprAST.h"
+#include "../ast/SwitchExprAST.h"
 #include "../utils/Logger.h"
 #include "Parser.h"
 #include <string>
@@ -331,6 +332,84 @@ std::unique_ptr<ExprAST> parse_return_expression() {
     return std::make_unique<ReturnExprAST>(std::move(expr));
 }
 
+std::unique_ptr<ExprAST> parse_switch_expression() {
+    get_next_token();
+    if (current_token != '(') {
+        return log_error("缺失 '('");
+    }
+
+    get_next_token();
+    auto condition = parse_expression();
+    if (!condition) {
+        return nullptr;
+    }
+
+    if (current_token != ')') {
+        return log_error("缺失 ')'");
+    }
+
+    get_next_token();
+    if (current_token != '{') {
+        return log_error("缺失 '{'");
+    }
+
+    get_next_token();
+    std::vector<std::pair<std::unique_ptr<ExprAST>, std::unique_ptr<BlockAST>>> cases;
+    while (current_token != tok_default) {
+        if (current_token != tok_case) {
+            return log_error("缺失 'case'");
+        }
+
+        get_next_token();
+        auto case_value = parse_expression();
+        if (!case_value) {
+            return nullptr;
+        }
+
+        if (current_token != ':') {
+            return log_error("缺失 ':'");
+        }
+
+        get_next_token();
+        std::vector<std::unique_ptr<ExprAST>> case_body;
+        while (current_token != tok_case) {
+            if (current_token == tok_default) {
+                break;
+            }
+
+            auto expr = parse_expression();
+            get_next_token();
+            if (!expr) {
+                return log_error("表达式错误");
+            }
+            case_body.push_back(std::move(expr));
+        }
+
+        auto case_body_expr = std::make_unique<BlockAST>(std::move(case_body));
+        cases.push_back(std::make_pair(std::move(case_value), std::move(case_body_expr)));
+    }
+
+    get_next_token();
+    if (current_token != ':') {
+        return log_error("缺失 ':'");
+    }
+
+    get_next_token();
+    std::vector<std::unique_ptr<ExprAST>> default_body;
+    while (current_token != '}') {
+        auto expr = parse_expression();
+        get_next_token();
+        if (!expr) {
+            return log_error("表达式错误");
+        }
+        default_body.push_back(std::move(expr));
+    }
+
+    auto default_body_expr = std::make_unique<BlockAST>(std::move(default_body));
+
+    return std::make_unique<SwitchExprAST>(std::move(condition), std::move(cases), std::move(default_body_expr));
+}
+
 std::unique_ptr<PrototypeAST> parse_prototype() {
     std::string function_name = identifier;
 
@@ -441,6 +520,8 @@ std::unique_ptr<ExprAST> parse_primary() {
             return parse_return_expression();
         case tok_for:
             return parse_for_expression();
+        case tok_switch:
+            return parse_switch_expression();
         default:
             std::string error_message = "未知的token: " + std::to_string(current_token);
             return log_error(error_message);

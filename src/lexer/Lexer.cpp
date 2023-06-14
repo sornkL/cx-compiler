@@ -87,6 +87,15 @@ int get_token() {
         if (identifier == "for") {
             return tok_for;
         }
+        if (identifier == "switch") {
+            return tok_switch;
+        }
+        if (identifier == "case") {
+            return tok_case;
+        }
+        if (identifier == "default") {
+            return tok_default;
+        }
         return tok_identifier;
     }
 

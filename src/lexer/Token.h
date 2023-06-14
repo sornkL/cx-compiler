@@ -18,6 +18,9 @@ enum Token {
     tok_func = -12,
     tok_return = -13,
     tok_for = -14,
+    tok_switch = -15,
+    tok_case = -16,
+    tok_default = -17,
 
     // 标识符与数字
     tok_identifier = -20,
