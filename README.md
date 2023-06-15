@@ -74,11 +74,11 @@ cxc -o <output_filename.ll> <input_filename.cx> [-O]
 
 ```c
 {
-  	if (true) {
+    if (true) {
       	// ...
     }
   
-  	if (true) {
+    if (true) {
       	// ...
     } else {
       	// ...
@@ -92,7 +92,7 @@ cxc -o <output_filename.ll> <input_filename.cx> [-O]
 
 ```c
 {
-		while (true) {
+    while (true) {
       	// ...
     }
 }
@@ -104,9 +104,9 @@ cxc -o <output_filename.ll> <input_filename.cx> [-O]
 
 ```c
 {
-  	int i;
-  	read i;  // 标准输入，scanf()
-  	write i; // 标准输出，printf()
+    int i;
+    read i;  // 标准输入，scanf()
+    write i; // 标准输出，printf()
 }
 ```
 
@@ -114,8 +114,8 @@ cxc -o <output_filename.ll> <input_filename.cx> [-O]
 
 ```c
 {
-  	int i;
-  	for (i=0; i<10; i=i+1) {
+    int i;
+    for (i=0; i<10; i=i+1) {
       	// ...
     }
 }
@@ -125,10 +125,10 @@ cxc -o <output_filename.ll> <input_filename.cx> [-O]
 
 ```c
 {
-  	int x;
-  	switch (x) {
+    int x;
+    switch (x) {
     case 0:
-    		// ...
+    	// ...
     case 1:
       	// ...
     default:
@@ -167,7 +167,7 @@ func fibonacci(n: int) -> int {
 
 ```c
 func test(x: float) -> float {
-  	return (1.0+2.0+x)*(x+(1.0+2.0));
+    return (1.0+2.0+x)*(x+(1.0+2.0));
 }
 ```
 
